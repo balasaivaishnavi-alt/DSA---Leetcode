@@ -1,0 +1,38 @@
+class Solution {
+    public int[] closestPrimes(int left, int right) {
+        // 1. Sieve of Eratosthenes up to 'right'
+        boolean[] isPrime = new boolean[right + 1];
+        Arrays.fill(isPrime, true);
+        isPrime[0] = false;
+        isPrime[1] = false;
+        
+        for (int i = 2; (long) i * i <= right; i++) {
+            if (isPrime[i]) {
+                for (int j = i * i; j <= right; j += i) {
+                    isPrime[j] = false;
+                }
+            }
+        }
+        
+        // 2. Find the closest pair of primes in [left, right]
+        int prevPrime = -1;
+        int minDiff = Integer.MAX_VALUE;
+        int[] ans = new int[]{-1, -1};
+        
+        for (int i = left; i <= right; i++) {
+            if (isPrime[i]) {
+                if (prevPrime != -1 && i - prevPrime < minDiff) {
+                    minDiff = i - prevPrime;
+                    ans[0] = prevPrime;
+                    ans[1] = i;
+                    
+                    // Twin primes (diff <= 2) are the minimum possible gap
+                    if (minDiff <= 2) return ans;
+                }
+                prevPrime = i;
+            }
+        }
+        
+        return ans;
+    }
+}
